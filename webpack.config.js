@@ -55,6 +55,13 @@ module.exports = {
             {
                 test: /\.less/,
                 loader: 'style-loader!css-loader!less-loader'
+            },
+             {
+                test: /\.(png|jpg|gif)$/,
+                loader: 'url-loader',
+                options: {
+                limit: 8192,
+                },
             }
         ]
     }
