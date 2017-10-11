@@ -15,29 +15,43 @@ export default class Calendar extends React.Component{
         const month = +today.slice(5,7);
         const dateList = getDateList(year,month);
         const list = convertDyadicArray(dateList, 6);
+        const activeDate = today;
         
         this.state = {
             today,
             year,
             month,       
             dateList,
-            list
+            list,
+            activeDate
         }
     }
     getClassName(date){
-        const { year, month, today, dateList,list } = this.state;
+        const { year, month, today, dateList,list,activeDate } = this.state;
         const strYM = `${year}-${month}`;
         let className;
         if(date.indexOf(strYM)>-1){           
             className = ''
         }else{
             className = 'item-disable'
-        }           
+        }  
+        if(date===today){
+            className += ' item-today'
+        } 
+        if(date===activeDate){
+             className += ' item-active'
+        }
+
+        //当前日期 'item-today'  
+        //选中日期 'item-active' 
+        console.log('today',today)     
         return className
     }
     handlerSelectDate(){
         this.props.onSelect('hello');
-        console.log(this.state)
+        console.log(this.state);
+
+        // this.setState((prevState) => ({ activeDate }))
     }
     render(){
         return (
