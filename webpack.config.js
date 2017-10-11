@@ -17,6 +17,7 @@ module.exports = {
         filename: '[name].js',
         publicPath: '/'
     },
+    devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
           template: './app/index.tpl.html',
