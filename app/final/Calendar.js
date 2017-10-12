@@ -8,6 +8,8 @@ export default class Calendar extends React.Component{
     constructor(props){
         super(props);        
         this.handlerSelectDate = this.handlerSelectDate.bind(this);
+        this.handlerReduceMonth = this.handlerReduceMonth.bind(this); 
+        this.handlerIncreaseMonth = this.handlerIncreaseMonth.bind(this); 
 
         const now = new Date();
         const today = dateFormat(now);
@@ -28,13 +30,15 @@ export default class Calendar extends React.Component{
     }
     getClassName(date){
         const { year, month, today, dateList,list,activeDate } = this.state;
-        const strYM = `${year}-${month}`;
+        const strMonth = month<10?`0${month}`:month;
+        const strYM = `${year}-${strMonth}`;
         let className;
         if(date.indexOf(strYM)>-1){           
             className = ''
         }else{
-            className = 'item-disable'
+            className = 'item-light'
         }  
+
         if(date===today){
             className += ' item-today'
         } 
@@ -44,14 +48,41 @@ export default class Calendar extends React.Component{
 
         //当前日期 'item-today'  
         //选中日期 'item-active' 
-        console.log('today',today)     
+        // console.log('today',today)     
         return className
     }
-    handlerSelectDate(){
+    handlerSelectDate(e){
         this.props.onSelect('hello');
-        console.log(this.state);
+        console.log(e.target);
 
         // this.setState((prevState) => ({ activeDate }))
+    }
+    handlerActiveDate(date,e){
+       // console.log('选中的日期',date,e)
+       
+        let activeDate = date;
+        this.props.onSelect(activeDate);
+        const year = parseInt(activeDate.slice(0,4));
+        const month = parseInt(activeDate.slice(5,7));  
+        const dateList = getDateList(year,month);
+        const list = convertDyadicArray(dateList, 6);      
+        this.setState((prevState) => ({ year,month,activeDate,dateList,list }))
+    }
+    handlerReduceMonth(){
+        //减小月份        
+        const month = this.state.month-1>0?this.state.month-1:12;  
+        const year = this.state.month-1>0?this.state.year:this.state.year-1;
+        const dateList = getDateList(year,month);
+        const list = convertDyadicArray(dateList, 6);      
+        this.setState((prevState) => ({ year,month,dateList,list }))
+    }
+    handlerIncreaseMonth(){
+        //增加月份
+        const month = this.state.month+1<13?this.state.month+1:1;  
+        const year = this.state.month+1<13?this.state.year:+this.state.year+1;
+        const dateList = getDateList(year,month);
+        const list = convertDyadicArray(dateList, 6);      
+        this.setState((prevState) => ({ year,month,dateList,list }))
     }
     render(){
         return (
@@ -80,14 +111,16 @@ export default class Calendar extends React.Component{
                             <th>六</th>                       
                         </tr>
                     </thead>
-                    <tbody onClick={this.handlerSelectDate}>
+                    <tbody>
                         {
                             this.state.list.map((arr, index)=>{
                                 return(<tr key={'row-'+index}>
                                     {arr.map((item, index)=>{
                                         return (
                                             <td key={'col-'+index}>
-                                                <span className={this.getClassName(item)}>{item.slice(8)}</span>
+                                                <span onClick={this.handlerActiveDate.bind(this,item)} className={this.getClassName(item)} data-realDate={item}>
+                                                    {item.slice(8)}
+                                                </span>
                                             </td>
                                         )
                                     })}
